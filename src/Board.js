@@ -154,50 +154,23 @@
       if(majorDiagonalColumnIndexAtFirstRow < 0) {
         columnIndex = -majorDiagonalColumnIndexAtFirstRow;
       } else {
-        // else x = index
         rowIndex = majorDiagonalColumnIndexAtFirstRow;
       }
 
       var rowLength = this.get(0).length;
       var axisValues = [];
       var boardMatrix = this.rows();
-      // Iterate over matrix 'this.rows()' using dual for-loops
-      // console.log("==============================");
-      for(var i = rowIndex; i < rowLength; i++){
 
-          if(boardMatrix[i][columnIndex] === 1) {
-            // console.log(boardMatrix[i][columnIndex] + " found at row: " + i + " column: " + columnIndex);
-            axisValues.push(boardMatrix[i][columnIndex]);
-            columnIndex++;
-            // debugger;
-          }
+      for(var i = rowIndex; i < rowLength; i++){
+        if(boardMatrix[i][columnIndex] === 1) {
+          axisValues.push(boardMatrix[i][columnIndex]);
+          columnIndex++;
+        }
       }
 
       return axisValues.length > 1 ? true : false;
     },
 
-    /////////////////
-    /// var rows = 
-    /// var columns = 
-    /// var axis = [1,0,0,0,1];
-    /// for(var x = 0; x < rows.length; x++){
-    ///   for(var y = x; y < columns.length; y++){
-    ///     if(board[x][y] === 1) {
-    ///       axis.push(board[x][y])
-    ///     }
-    ///   }
-    /// }
-    /// 
-    /// count = 0
-    ///
-    /// [
-    /// [1, 0, 0, 0],
-    /// [0, 0, 0, 0],
-    /// [1, 0, 0, 0],
-    /// [0, 0, 0, 0]
-    /// ]
-    ///
-    //////////////////
 
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
@@ -205,11 +178,8 @@
       var result = false;
       for(var i = -rowLength + 1; i < rowLength; i++){
         result = result || this.hasMajorDiagonalConflictAt(i);
-        // if(result) {
-        //   break;
-        // }
       }
-      return result; // fixme
+      return result;
     },
 
 
