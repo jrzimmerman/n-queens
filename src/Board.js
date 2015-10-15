@@ -152,23 +152,27 @@
       var columnIndex = 0;
       // if index is neg columnIndex = -index
       if(majorDiagonalColumnIndexAtFirstRow < 0) {
-        columnIndex = -majorDiagonalColumnIndexAtFirstRow;
+        rowIndex = -majorDiagonalColumnIndexAtFirstRow;
+        //columnIndex = -majorDiagonalColumnIndexAtFirstRow;
       } else {
-        rowIndex = majorDiagonalColumnIndexAtFirstRow;
+        //rowIndex = majorDiagonalColumnIndexAtFirstRow;
+        columnIndex = majorDiagonalColumnIndexAtFirstRow;
       }
 
       var rowLength = this.get(0).length;
-      var axisValues = [];
+      var axisValues = 0;
       var boardMatrix = this.rows();
 
       for(var i = rowIndex; i < rowLength; i++){
-        if(boardMatrix[i][columnIndex] === 1) {
-          axisValues.push(boardMatrix[i][columnIndex]);
-          columnIndex++;
+        if(boardMatrix[i][columnIndex] === undefined) {
+          break;
         }
+        axisValues += boardMatrix[i][columnIndex];
+        // console.log(axisValues, 'colInd: ' + columnIndex, 'rowInd: ' + i);
+        columnIndex++;
       }
 
-      return axisValues.length > 1 ? true : false;
+      return axisValues > 1 ? true : false;
     },
 
 
@@ -189,12 +193,42 @@
     //
     // test if a specific minor diagonal on this board contains a conflict
     hasMinorDiagonalConflictAt: function(minorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+      var rowIndex = 0;
+      var columnIndex = 0;
+      var rowLength = this.get(0).length;
+
+      // if input < rowLength -1
+       if(minorDiagonalColumnIndexAtFirstRow < (rowLength - 1)) {
+        rowIndex = minorDiagonalColumnIndexAtFirstRow;
+        rowColumn = 0;
+       } else {
+        rowIndex = rowLength - 1;
+        columnIndex = minorDiagonalColumnIndexAtFirstRow - (rowLength - 1);
+       }
+
+      var axisValues = 0;
+      var boardMatrix = this.rows();
+
+      // for loop: set i = rowIndex while i >= 0 decrement i
+      for (var i = rowIndex; i >= 0; i--) {
+        if(boardMatrix[i][columnIndex] === undefined) {
+          break;
+        }
+        axisValues += boardMatrix[i][columnIndex];
+        // console.log(axisValues, 'colInd: ' + columnIndex, 'rowInd: ' + i);
+        columnIndex++;
+      }
+      return axisValues > 1 ? true : false;
     },
 
     // test if any minor diagonals on this board contain conflicts
     hasAnyMinorDiagonalConflicts: function() {
-      return false; // fixme
+      var rowLength = this.get(0).length;
+      var result = false;
+      for(var i = 0; i < (rowLength * 2); i++){
+        result = result || this.hasMinorDiagonalConflictAt(i);
+      }
+      return result;
     }
 
     /*--------------------  End of Helper Functions  ---------------------*/
