@@ -79,12 +79,28 @@
     //
     // test if a specific row on this board contains a conflict
     hasRowConflictAt: function(rowIndex) {
-      return false; // fixme
+      var row = this.get(rowIndex);
+      var count = 0;
+      for(var i =0; i < row.length; i++){
+        count += row[i];
+        if(count > 1){
+          return true;
+        }
+      } 
+      return false;
     },
 
     // test if any rows on this board contain conflicts
     hasAnyRowConflicts: function() {
-      return false; // fixme
+      var rows = this.rows();
+      var context = this;
+      var result = false;
+      rows.forEach(function(row, i){
+        if(context.hasRowConflictAt(i)){
+          result = true;
+        }
+      });
+      return result;
     },
 
 
@@ -94,14 +110,36 @@
     //
     // test if a specific column on this board contains a conflict
     hasColConflictAt: function(colIndex) {
-      return false; // fixme
+      // Create an array that is column
+      var column = [];
+      var count = 0;
+      // Iterate over each row and push row[colIndex] into column array
+      this.rows().forEach(function(row){
+        column.push(row[colIndex]);
+      });
+      // Iterate over column and determine if the contents add up to more than 1
+      for(var i = 0; i < column.length; i++){
+        count += column[i];
+        if(count > 1){
+          return true;
+        }
+      } 
+      return false;
     },
 
     // test if any columns on this board contain conflicts
     hasAnyColConflicts: function() {
-      return false; // fixme
+      var columnLength = this.rows().length;
+      var columnResults = [];
+      //Iterate over columns using for loop over col length
+      for(var i = 0; i < columnLength; i++){
+        //call hasConfAt(i).push to colResults
+        columnResults.push(this.hasColConflictAt(i));
+      }
+      return columnResults.reduce(function(prev, current){
+        return (prev || current);
+      }, false);
     },
-
 
 
     // Major Diagonals - go from top-left to bottom-right
@@ -109,12 +147,69 @@
     //
     // test if a specific major diagonal on this board contains a conflict
     hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+      // Build vars dependent on positive or neg input
+      var rowIndex = 0;
+      var columnIndex = 0;
+      // if index is neg columnIndex = -index
+      if(majorDiagonalColumnIndexAtFirstRow < 0) {
+        columnIndex = -majorDiagonalColumnIndexAtFirstRow;
+      } else {
+        // else x = index
+        rowIndex = majorDiagonalColumnIndexAtFirstRow;
+      }
+
+      var rowLength = this.get(0).length;
+      var axisValues = [];
+      var boardMatrix = this.rows();
+      // Iterate over matrix 'this.rows()' using dual for-loops
+      // console.log("==============================");
+      for(var i = rowIndex; i < rowLength; i++){
+
+          if(boardMatrix[i][columnIndex] === 1) {
+            // console.log(boardMatrix[i][columnIndex] + " found at row: " + i + " column: " + columnIndex);
+            axisValues.push(boardMatrix[i][columnIndex]);
+            columnIndex++;
+            // debugger;
+          }
+      }
+
+      return axisValues.length > 1 ? true : false;
     },
+
+    /////////////////
+    /// var rows = 
+    /// var columns = 
+    /// var axis = [1,0,0,0,1];
+    /// for(var x = 0; x < rows.length; x++){
+    ///   for(var y = x; y < columns.length; y++){
+    ///     if(board[x][y] === 1) {
+    ///       axis.push(board[x][y])
+    ///     }
+    ///   }
+    /// }
+    /// 
+    /// count = 0
+    ///
+    /// [
+    /// [1, 0, 0, 0],
+    /// [0, 0, 0, 0],
+    /// [1, 0, 0, 0],
+    /// [0, 0, 0, 0]
+    /// ]
+    ///
+    //////////////////
 
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
-      return false; // fixme
+      var rowLength = this.get(0).length;
+      var result = false;
+      for(var i = -rowLength + 1; i < rowLength; i++){
+        result = result || this.hasMajorDiagonalConflictAt(i);
+        // if(result) {
+        //   break;
+        // }
+      }
+      return result; // fixme
     },
 
 
