@@ -73,155 +73,132 @@
       }
 
       //if more than 1 queen return true
-      return count > 1 ? true : false; 
+      return count > 1; 
     },
 
     hasAnyRowConflicts: function() {
-      // grab board (allRows)
-      var allRows  = this.rows();
-      var count = 0;
+      // set size of row
+      var size = this.get('n');
 
       // iterate through all rows
-      for ( var i=0; i<allRows.length; i++ ) {
-        // if conflict found
+      for ( var i = 0; i < size; i++ ) {
+        // if conflict found return true
         if ( this.hasRowConflictAt(i) ) {
-          // add to count of conflicts
-          count ++;
-        }
-      }
-
-      // if any conflicts return true
-      return count > 0 ? true : false;
-    },
-
-    hasColConflictAt: function(colIndex) {
-      // grab board (allRows)
-      var allRows = this.rows();
-      var count = 0;
-
-      // iterate through column (colIndex)
-      for ( var i=0; i < allRows.length; i++ ) {
-        // add all column items (queens are 1)
-        count += allRows[i][colIndex];
-      }
-
-      //if more than 1 queen return true
-      return count > 1 ? true : false;
-    },
-
-    hasAnyColConflicts: function() {
-      // grab row length (n)
-      var n = this.get('n');
-      var count = 0;
-
-      // iterate through all columns
-      for ( var i = 0; i < n; i ++ ) {
-        // if conflict found
-        if ( this.hasColConflictAt(i) ) {
-          // add to count of conflicts
-          count++;
-        }
-      }
-
-      // if any conflicts return true
-      return (count > 0) ? true : false;
-    },
-
-    hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
-      // grab row length
-      var n = this.get('n');
-      // grab board (allRows)
-      var allRows = this.rows();
-      // set major diagonal start index
-      var col = majorDiagonalColumnIndexAtFirstRow;
-      var count = 0;
-
-      // iterate through rows of major diagonal
-      for ( var row = 0; row < n ; row++ ) {
-        // if major diagonal index is >= 0
-        if (col >= 0) {
-          // if piece on major diagonal is a queen
-          if ( allRows[row][col] === 1 ) {
-            // add to count of queens
-            count++;
-            // if there are more than 1 queen
-            if (count > 1) {
-              // return true to exit loop
-              return true;
-            }
-          }
-        }
-        // increment through major diagonal
-        col++;
-      }
-
-      // if more than 1 queen on major diagonal return true
-      return (count > 1) ? true : false;
-    },
-
-    hasAnyMajorDiagonalConflicts: function() {
-      // get row length
-      var n = this.get('n');
-      // start point of major diagonals
-      var start = -n + 1;
-
-      // iterate through major diagonals
-      for( var col = start; col < n; col++ ) {
-        // if any conflicts on major diagonal return true
-        if( this.hasMajorDiagonalConflictAt(col) ) {
           return true;
         }
       }
+
+      return false;
+    },
+
+    hasColConflictAt: function(colIndex) {
+      // set size of row
+      var size = this.get('n');
+      var count = 0;
+
+      // iterate through column
+      for( var i = 0; i < size; i++ ) {
+        // set row i of board
+        var row = this.get(i);
+        // accumulate column queens;
+        count += row[colIndex];
+      }
+
+
+      //if more than 1 queen return true
+      return count > 1;
+    },
+
+    hasAnyColConflicts: function() {
+      // set size of row
+      var size = this.get('n');
+
+      // iterate through all columns
+      for ( var i = 0; i < size; i ++ ) {
+        // if conflict found return true
+        if ( this.hasColConflictAt(i) ) {
+          return true;
+        }
+      }
+
+      return false;
+    },
+
+    hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
+      // set size of row
+      var size = this.get('n');
+      // count of major diagonal conflicts
+      var count = 0;
+      var rowIndex = 0;
+      var columnIndex = majorDiagonalColumnIndexAtFirstRow;
+
+      // iterate through rows of major diagonal
+      for( ; rowIndex < size && columnIndex < size; rowIndex++, columnIndex++ ){
+        // if major diagonal index is within board
+        if( columnIndex >= 0 ) {
+          // set row to current index
+          var row = this.get(rowIndex);
+          // accumulate count of queens along major diagonal
+          count += row[columnIndex];
+        }
+      }
+
+      // return major diagonal conflict count boolean
+      return count > 1;
+    },
+
+    hasAnyMajorDiagonalConflicts: function() {
+      // set size of row
+      var size = this.get('n');
+
+      // iterate through major diagonals
+      for( var i = 1 - size; i < size; i++ ) {
+        // if any conflicts on major diagonal return true
+        if( this.hasMajorDiagonalConflictAt(i) ) {
+          return true;
+        }
+      }
+
       // if no conflicts found return false
       return false;
     },
 
     hasMinorDiagonalConflictAt: function(minorDiagonalColumnIndexAtFirstRow) {
-      // get row length
-      var n = this.get('n');
-      // get board (allRows)
-      var allRows = this.rows();
-      // get minor diagonal index
-      var col = minorDiagonalColumnIndexAtFirstRow;
+      // set size of row
+      var size = this.get('n');
+      // count of minor diagonal conflicts
       var count = 0;
+      var rowIndex = 0;
+      var columnIndex = minorDiagonalColumnIndexAtFirstRow;
 
       // iterate through rows of minor diagonal
-      for ( var row = 0; row < n ; row++ ) {
-        // if 
-        if ( col < n ) {
-          // if piece on minor diagonal is queen
-          if ( allRows[row][col] === 1 ) {
-            // add to count of queens
-            count++;
-            // if more than 1 queen
-            if (count > 1) {
-              // return true to exit loop
-              return true;
-            }
-          }
+      for( ; rowIndex < size && columnIndex >= 0; rowIndex++, columnIndex-- ) {
+        // if minor diagonal index is within board
+        if( columnIndex < size ) {
+          // set row to current index
+          var row = this.get(rowIndex);
+          // accumulate count of queens along minor diagonal
+          count += row[columnIndex];
         }
-        
-        // decrement through minor diagonal
-        col--;
       }
 
-      return false;
+      // return minor diagonal conflict count boolean
+      return count > 1;
     },
 
     hasAnyMinorDiagonalConflicts: function() {
-      // get row length
-      var n = this.get('n');
-      // start point of minor diagonal
-      var start = (n * 2) - 1;
+      // set size of row
+      var size = this.get('n');
 
       // iterate through minor diagonals
-      for( var col = start; col >= 0; col-- ) {
+      for( var i = (size * 2) - 1; i >= 0; i-- ) {
         // if minor diagonal conflict found return true
-        if( this.hasMinorDiagonalConflictAt(col) ) {
+        if( this.hasMinorDiagonalConflictAt(i) ) {
           return true;
         }
       }
 
+      // if no conflicts found return false
       return false;
     }
 
